@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang=”en”>
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport” content=”width=device-width, initial-scale=1.0">
+ <meta http-equiv=”X-UA-Compatible” content=”ie=edge”>
+ <title>Document</title>
+<link rel=”stylesheet” type=”text/css” href=”index.css”>
+<script src=”./node_modules/web3/dist/web3.min.js”></script>
+<script>
+    /*
+    if (typeof web3 !== "undefined") 
+    {
+        web3 = new Web3(web3.currentProvider);
+    } 
+    else 
+    {
+        // set the provider you want from Web3.providers
+        web3 = new Web3(new Web3.providers.HttpProvider(“http://localhost:8545”));
+    }
+   */
+
+    
+  
+
+</script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script> -->
+
+</head>
+<body>
+ <div class=”container”>
+<h1>First Smart Contract</h1>
+<h2 id=”instructor”></h2>
+<label for=”name” class="col-lg-2 control-label">Instructor Name</label>
+ <input id=”name” type=”text”>
+<label for=”name” class="col-lg-2 control-label">Instructor Age</label>
+ <input id=”age” type=”text”>
+<button id=”button”>Update Instructor</button>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script>
+ // future code goes here
+
+ const Web3 = require('web3')
+    const rpcURL = "https://goerli.infura.io/v3/8c872481bb2149cb809038d5d7c76e54"; // Your RCP URL goes here
+    const web3 = new Web3(rpcURL)
+
+    web3.eth.defaultAccount = web3.eth.accounts[0];
+    var ABI = [
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_fName",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_age",
+          "type": "uint256"
+        }
+      ],
+      "name": "setInstructor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getInstructor",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    }
+  ];
+        
+  var CoursesContract = web3.eth.contract(ABI);
+  var Courses = CoursesContract.at('0xB6b5847eA6f7608537acE3a56F8a29BbB8F7a6A4');
+  
+  Courses.methods.getInstructor().call().then((jsonRpcResult) => {
+      htmlLabel.innerHTML = jsonRpcResult;
+      console.log(jsonRpcResult);
+    });
+
+    $('#button').click(function () {
+      //myContract.methods.incr().send({from:'0x496fB73C949f4605be3aaBDE76aD78EFFB5dD78f'},function () {
+      //myContract.methods.incr().send({from:'0xDCeA62a367b83846E86BddeC27D03753C18D5470'},function () { //ganache
+        Courses.methods.setInstructor($("#name").val(), $("#age").val()).send({from:'0xd389F76AeE66B7b94D5Cec2FAf623A9dB3E6473D'},function () { //infura
+        Courses.methods.getInstructor().call((error, result) => { htmlLabel.innerHTML = result; console.log(result) })
+      })
+    });
+
+
+  /*
+ $("#button").click(function() {
+  Courses.setInstructor($("#name").val(), $("#age").val());
+  });
+
+  Courses.getInstructor(function(error, result){
+  if(!error){
+    $("#instructor").html(result[0]+' ('+result[1]+' years old)');
+    console.log(result);
+    }
+ else
+   console.error(error);
+ });
+ */
+ </script>
+</body>
+</html>
